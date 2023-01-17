@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 for(int i = 0; i < latitudes.size(); i++) {
                     locations.add(new LatLng(Double.parseDouble(latitudes.get(i)), Double.parseDouble(longitudes.get(i))));
                     Log.i("Places", locations.toString());
-                    new_place.setVisibility(View.INVISIBLE);
                 }
             }
         }
