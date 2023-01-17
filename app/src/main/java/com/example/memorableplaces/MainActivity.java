@@ -3,10 +3,13 @@ package com.example.memorableplaces;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.arch.core.executor.TaskExecutor;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,6 +42,25 @@ public class MainActivity extends AppCompatActivity {
         locations=new ArrayList<LatLng>();
         listView=(ListView)findViewById(R.id.places);
         places=new ArrayList<String>();
+        SharedPreferences sharedPreferences = this.getSharedPreferences("com.example.memorableplaces", Context.MODE_PRIVATE);
+        ArrayList<String> latitudes = new ArrayList<>();
+        ArrayList<String> longitudes = new ArrayList<>();
+        try{
+            places = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("places", ObjectSerializer.serialize(new ArrayList<String>())));
+            latitudes = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("lats", ObjectSerializer.serialize(new ArrayList<String>())));
+            longitudes = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("longs", ObjectSerializer.serialize(new ArrayList<String>())));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(places.size() > 0 && latitudes.size() > 0 && longitudes.size() > 0){
+            if(places.size() == latitudes.size() && places.size() == longitudes.size()){
+                for(int i = 0; i < latitudes.size(); i++) {
+                    locations.add(new LatLng(Double.parseDouble(latitudes.get(i)), Double.parseDouble(longitudes.get(i))));
+                    Log.i("Places", locations.toString());
+                    new_place.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
         arrayAdapter=new ArrayAdapter(this,R.layout.listrow,R.id.txtView2,places);
         listView.setAdapter(arrayAdapter);
         new_place.setOnClickListener(new View.OnClickListener() {
